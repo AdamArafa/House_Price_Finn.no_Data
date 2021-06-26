@@ -52,11 +52,11 @@ appartment_info = {
     'Beskrivelse': webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/section[1]/h1').text,
     'Eiendomsmegler': webD.find_element_by_xpath('/html/body/main/div/div[4]/div[2]/div[1]/div/div[1]/div/div[1]/h2/img').get_property('alt'),
     'Faciliteter': webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/section[2]/div/ul').text
-     
     }
 
 appartment_info
 '''
+
 
 all_appartments_details = []
 
@@ -64,6 +64,7 @@ all_appartments_details = []
 for i in tqdm(appartments_urls):
     
     webD.get(i)
+    
     try:
         Address= webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/section[1]/p').text
     except NoSuchElementException:
@@ -129,7 +130,8 @@ for i in tqdm(appartments_urls):
     except NoSuchElementException:
         Eiendomsmegler = -1
     try:
-        Faciliteter= webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/section[2]/div/ul').text
+        f = [x.text for x in webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/section[2]/div/ul').find_elements_by_tag_name("li")]
+        Faciliteter = ['¤'.join(f[ : ])]
     except NoSuchElementException:
         Faciliteter = -1
     
@@ -148,9 +150,9 @@ for i in tqdm(appartments_urls):
         'Etasje': Etasje,
         'Byggeår': Byggeår,
         'Energimerking': Energimerking,
+        'Faciliteter': Faciliteter,
         'Beskrivelse': Beskrivelse,
-        'Eiendomsmegler': Eiendomsmegler,
-        'Faciliteter': Faciliteter
+        'Eiendomsmegler': Eiendomsmegler
         }
     
     all_appartments_details.append(single_appartment_info)
@@ -158,7 +160,7 @@ for i in tqdm(appartments_urls):
 
 # create pandas dataframe out of the all_appartments_details list
 df = pd.DataFrame(all_appartments_details)
-df.head()
+df.shape
 
 # save the dataframe 
 df.to_csv('finn_appartments_data.csv', index=False)
