@@ -11,11 +11,12 @@ from tqdm import tqdm
 import pandas as pd
 
 webD = wb.Chrome('chromedriver.exe')
-webD.get('https://www.finn.no/realestate/homes/search.html?abTestKey=oneColumn&property_type=3&q=leilighet&sort=PUBLISHED_DESC')
+webD.get('https://www.finn.no/realestate/homes/search.html?lifecycle=1&location=0.20061&property_type=3&property_type=1&property_type=2&property_type=4&sort=PUBLISHED_DESC')
 
 
 appartments_urls = []
 condition=True
+
 
 while condition:
     appartments_lst = webD.find_elements_by_class_name('ads__unit')
@@ -28,19 +29,19 @@ while condition:
         except:
             continue
         try:
-            webD.find_element_by_xpath('//*[@id="__next"]/main/div[3]/div/nav/a/span[1]').click()
+            webD.find_element_by_xpath('/html/body/div[2]/main/div[3]/div/div/nav/a/span[1]').click()
         except:
             condition=False
-
+            
 # what I want to collect about each appartment
 '''
 appartment_info = {
     'Address': webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/section[1]/p').text,
     'Prisantydning': webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/div[3]/span[2]').text,
-    'Fellesgjeld': webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/div[3]/dl[2]/dd[1]').text,
-    'Omkostninger': webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/div[3]/dl[2]/dd[2]').text,
-    'Totalpris': webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/div[3]/dl[2]/dd[3]').text,
-    'Felleskost': webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/div[3]/dl[2]/dd[4]').text,
+    'Fellesgjeld': webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/div[2]/dl[2]/dd[1]').text,
+    'Omkostninger': webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/div[2]/dl[2]/dd[2]').text,
+    'Totalpris': webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/div[2]/dl[2]/dd[3]').text,
+    'Felleskost': webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/div[2]/dl[2]/dd[3]').text,
     'Boligtype': webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/section[2]/dl/dd[1]').text,
     'Eieform_bolig': webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/section[2]/dl/dd[2]').text,
     'Soverom': webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/section[2]/dl/dd[3]').text,
@@ -51,17 +52,18 @@ appartment_info = {
     'Energimerking': webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/section[2]/dl/dd[8]/div').text,
     'Beskrivelse': webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/section[1]/h1').text,
     'Eiendomsmegler': webD.find_element_by_xpath('/html/body/main/div/div[4]/div[2]/div[1]/div/div[1]/div/div[1]/h2/img').get_property('alt'),
-    'Faciliteter': webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/section[2]/div/ul').text
+    'Fasiliteter': webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/section[2]/div/ul').text
     }
 
 appartment_info
+
 '''
 
 
 all_appartments_details = []
 
 # the code stoped twice. Run the code again from the last readed url. this way tqdm(appartments_urls[520:])
-for i in tqdm(appartments_urls):
+for i in tqdm(set(appartments_urls)):
     
     webD.get(i)
     
@@ -70,23 +72,23 @@ for i in tqdm(appartments_urls):
     except NoSuchElementException:
         Address = -1
     try:
-        Prisantydning= webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/div[3]/span[2]').text
+        Prisantydning= webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/div[2]/span[2] ').text
     except NoSuchElementException:
         Prisantydning = -1
     try:
-        Fellesgjeld= webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/div[3]/dl[2]/dd[1]').text
+        Fellesgjeld= webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/div[2]/dl[2]/dd[1]').text
     except NoSuchElementException:
         Fellesgjeld = -1
     try:
-        Omkostninger= webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/div[3]/dl[2]/dd[2]').text
+        Omkostninger= webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/div[2]/dl[2]/dd[2]').text
     except NoSuchElementException:
         Omkostninger = -1
     try:
-        Totalpris= webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/div[3]/dl[2]/dd[3]').text
+        Totalpris= webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/div[2]/dl[2]/dd[3]').text
     except NoSuchElementException:
         Totalpris = -1
     try:
-        Felleskost= webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/div[3]/dl[2]/dd[4]').text
+        Felleskost= webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/div[2]/dl[2]/dd[3]').text
     except NoSuchElementException:
         Felleskost = -1
     try:
@@ -130,10 +132,9 @@ for i in tqdm(appartments_urls):
     except NoSuchElementException:
         Eiendomsmegler = -1
     try:
-        f = [x.text for x in webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/section[2]/div/ul').find_elements_by_tag_name("li")]
-        Faciliteter = ['¤'.join(f[ : ])]
+        Fasiliteter = webD.find_element_by_xpath('/html/body/main/div/div[4]/div[1]/div/section[2]/div/ul').find_elements_by_tag_name("li")
     except NoSuchElementException:
-        Faciliteter = -1
+        Fasiliteter = -1
     
     single_appartment_info = {
         'Address': Address,
@@ -150,7 +151,7 @@ for i in tqdm(appartments_urls):
         'Etasje': Etasje,
         'Byggeår': Byggeår,
         'Energimerking': Energimerking,
-        'Faciliteter': Faciliteter,
+        'Fasiliteter': Fasiliteter,
         'Beskrivelse': Beskrivelse,
         'Eiendomsmegler': Eiendomsmegler
         }
@@ -163,8 +164,8 @@ df = pd.DataFrame(all_appartments_details)
 df.shape
 
 # save the dataframe 
-df.to_csv('finn_appartments_data.csv', index=False)
+df.to_csv('scraped_finn_data.csv', index=False)
 
 # reading the saved data file
-read_data = pd.read_csv('finn_appartments_data.csv')
+read_data = pd.read_csv('scraped_finn_data.csv')
 read_data.head()
